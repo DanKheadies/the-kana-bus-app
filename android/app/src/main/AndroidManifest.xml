@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="kana_bus_app"
+        android:label="Kana Bus"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

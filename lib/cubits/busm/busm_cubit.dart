@@ -10,6 +10,7 @@ class BusmCubit extends HydratedCubit<BusmState> {
   void addBusm(Busm busm) {
     List<Busm> kanaBusmsList = state.kanaBusms.toList();
     kanaBusmsList.add(busm);
+    kanaBusmsList.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
     emit(state.copyWith(kanaBusms: kanaBusmsList));
   }
 
@@ -17,9 +18,9 @@ class BusmCubit extends HydratedCubit<BusmState> {
     emit(state.copyWith(kanaBusms: []));
   }
 
-  void removeBusm(Busm busm) {
+  void removeBusm(int index) {
     List<Busm> kanaBusmsList = state.kanaBusms.toList();
-    kanaBusmsList.remove(busm);
+    kanaBusmsList.removeAt(index);
     emit(state.copyWith(kanaBusms: kanaBusmsList));
   }
 

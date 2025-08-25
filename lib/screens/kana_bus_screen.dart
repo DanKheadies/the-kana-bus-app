@@ -17,7 +17,6 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
   FocusNode focusInput = FocusNode();
   GoogleTranslator translator = GoogleTranslator();
   KanaKit kanaKit = KanaKit();
-  List<Busm> kanaBusms = [];
   TextEditingController englishCont = TextEditingController();
   TextEditingController inputCont = TextEditingController();
   TextEditingController kanaCont = TextEditingController();
@@ -47,13 +46,15 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
+                BusmPane(
                   controller: inputCont,
-                  onChanged: (value) {
+                  label: 'Input',
+                  onChanged: (value) async {
+                    // TODO: handle translating if the user saves before trans
+                    // can complete
                     if (value != '') {
-                      _translate(value);
+                      await _translate(value);
                     } else {
-                      // print('clear');
                       _clear();
                     }
                   },
@@ -63,347 +64,296 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
                     _clear();
                   },
                   onSubmitted: (_) {},
-                  focusNode: focusInput,
-                  decoration: InputDecoration(
-                    labelText: 'Input',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.surface,
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
+                  textColor: Theme.of(context).colorScheme.surface,
+                  focusInput: focusInput,
+                  isDisabled: false,
                 ),
                 const SizedBox(height: 8, width: double.infinity),
-                TextField(
+                BusmPane(
                   controller: englishCont,
-                  readOnly: true,
+                  label: 'English Translation',
                   onChanged: (_) {},
+                  onEditingComplete: () {},
                   onSubmitted: (_) {},
-                  decoration: InputDecoration(
-                    labelText: 'English Translation',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.surface,
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
+                  textColor: Theme.of(context).colorScheme.tertiary,
                 ),
                 const SizedBox(height: 8, width: double.infinity),
-                TextField(
+                BusmPane(
                   controller: kanaCont,
-                  readOnly: true,
+                  label: 'Kana Translation',
                   onChanged: (_) {},
+                  onEditingComplete: () {},
                   onSubmitted: (_) {},
-                  decoration: InputDecoration(
-                    labelText: 'Kana Translation',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.surface,
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  textColor: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 8, width: double.infinity),
-                TextField(
+                BusmPane(
                   controller: romajiCont,
-                  readOnly: true,
+                  label: 'Romaji Translation',
                   onChanged: (_) {},
+                  onEditingComplete: () {},
                   onSubmitted: (_) {},
-                  decoration: InputDecoration(
-                    labelText: 'Romaji Translation',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.surface,
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(width: 2),
-                    ),
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                  textColor: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(height: 20),
-                Expanded(
-                  child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: kanaBusms.length,
-                    itemBuilder: (context, index) {
-                      // TODO: copy the input; swipe left immediate
-                      // TODO: delete the busm; swipe right w/ confirmation
-                      return Slidable(
-                        key: Key(kanaBusms[index].createdAt.toString()),
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () {}),
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) => print('delete'),
-                              backgroundColor: Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
+                // TODO: refactor as widget
+                BlocBuilder<BusmCubit, BusmState>(
+                  builder: (context, state) {
+                    return Expanded(
+                      child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: state.kanaBusms.length,
+                        itemBuilder: (context, index) {
+                          // TODO: copy the input; swipe left immediate
+                          // TODO: delete the busm; swipe right w/ confirmation
+                          return Slidable(
+                            key: Key(
+                              state.kanaBusms[index].createdAt.toString(),
                             ),
-                            SlidableAction(
-                              onPressed: (context) => print('share'),
-                              backgroundColor: Color(0xFF21B7CA),
-                              foregroundColor: Colors.white,
-                              icon: Icons.share,
-                              label: 'Share',
-                            ),
-                          ],
-                        ),
-
-                        // The end action pane is the one at the right or the bottom side.
-                        endActionPane: ActionPane(
-                          motion: ScrollMotion(),
-                          children: [
-                            SlidableAction(
-                              // An action can be bigger than the others.
-                              flex: 2,
-                              onPressed: (context) => print('archive'),
-                              backgroundColor: Color(0xFF7BC043),
-                              foregroundColor: Colors.white,
-                              icon: Icons.archive,
-                              label: 'Archive',
-                            ),
-                            SlidableAction(
-                              onPressed: (context) => print('save'),
-                              backgroundColor: Color(0xFF0392CF),
-                              foregroundColor: Colors.white,
-                              icon: Icons.save,
-                              label: 'Save',
-                            ),
-                          ],
-                        ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            startActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              dismissible: DismissiblePane(onDismissed: () {}),
                               children: [
-                                Text(
-                                  kanaBusms[index].input,
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.surfaceBright,
-                                  ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    String input = state.kanaBusms[index].input;
+                                    // setState(() {
+                                    //   kanaBusms.removeAt(index);
+                                    // });
+                                    context.read<BusmCubit>().removeBusm(index);
+                                    ScaffoldMessenger.of(context)
+                                      ..clearSnackBars()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '$input has been removed.',
+                                          ),
+                                        ),
+                                      );
+                                  },
+                                  backgroundColor: Color(0xFFFE4A49),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
                                 ),
-                                Text(
-                                  kanaBusms[index].english,
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
-                                  ),
+                                SlidableAction(
+                                  onPressed: (context) => print('TODO: share'),
+                                  backgroundColor: Color(0xFF21B7CA),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.share,
+                                  label: 'Share',
                                 ),
-                                Text(
-                                  kanaBusms[index].kana,
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                                Text(
-                                  kanaBusms[index].romaji,
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                                index != kanaBusms.length - 1
-                                    ? Divider(
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                    )
-                                    : const SizedBox(),
                               ],
                             ),
-                          ),
-                        ),
-                      );
-                      return Dismissible(
-                        key: Key(kanaBusms[index].createdAt.toString()),
-                        onDismissed: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            String input = kanaBusms[index].input;
-                            setState(() {
-                              kanaBusms.removeAt(index);
-                            });
-                            ScaffoldMessenger.of(context)
-                              ..clearSnackBars()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text('$input has been removed.'),
+
+                            // The end action pane is the one at the right or the bottom side.
+                            endActionPane: ActionPane(
+                              motion: ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  // An action can be bigger than the others.
+                                  flex: 2,
+                                  onPressed: (context) {
+                                    String input = state.kanaBusms[index].input;
+                                    setState(() {
+                                      inputCont.text = input;
+                                    });
+                                    _translate(input);
+                                    ScaffoldMessenger.of(context)
+                                      ..clearSnackBars()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '$input has been copied.',
+                                          ),
+                                        ),
+                                      );
+                                  },
+                                  backgroundColor: Color(0xFF7BC043),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.copy,
+                                  label: 'Copy',
                                 ),
-                              );
-                          } else if (direction == DismissDirection.endToStart) {
-                            // TODO copy
-                            setState(() {
-                              inputCont.text = kanaBusms[index].input;
-                            });
-                            ScaffoldMessenger.of(context)
-                              ..clearSnackBars()
-                              ..showSnackBar(
-                                SnackBar(content: Text('Trying to copy..')),
-                              );
-                          }
+                                SlidableAction(
+                                  onPressed: (context) => print('TODO: save'),
+                                  backgroundColor: Color(0xFF0392CF),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.save,
+                                  label: 'Save',
+                                ),
+                              ],
+                            ),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      state.kanaBusms[index].input,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surfaceBright,
+                                      ),
+                                    ),
+                                    Text(
+                                      state.kanaBusms[index].english,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.tertiary,
+                                      ),
+                                    ),
+                                    Text(
+                                      state.kanaBusms[index].kana,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                      ),
+                                    ),
+                                    Text(
+                                      state.kanaBusms[index].romaji,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                      ),
+                                    ),
+                                    index != state.kanaBusms.length - 1
+                                        ? Divider(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.surface,
+                                        )
+                                        : const SizedBox(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                          // return Dismissible(
+                          //   key: Key(kanaBusms[index].createdAt.toString()),
+                          //   onDismissed: (direction) {
+                          //     if (direction == DismissDirection.startToEnd) {
+                          //       String input = kanaBusms[index].input;
+                          //       setState(() {
+                          //         kanaBusms.removeAt(index);
+                          //       });
+                          //       ScaffoldMessenger.of(context)
+                          //         ..clearSnackBars()
+                          //         ..showSnackBar(
+                          //           SnackBar(
+                          //             content: Text('$input has been removed.'),
+                          //           ),
+                          //         );
+                          //     } else if (direction == DismissDirection.endToStart) {
+                          //       // TODO copy
+                          //       setState(() {
+                          //         inputCont.text = kanaBusms[index].input;
+                          //       });
+                          //       ScaffoldMessenger.of(context)
+                          //         ..clearSnackBars()
+                          //         ..showSnackBar(
+                          //           SnackBar(content: Text('Trying to copy..')),
+                          //         );
+                          //     }
+                          //   },
+                          //   confirmDismiss: (direction) async {
+                          //     if (direction == DismissDirection.endToStart) {
+                          //       return Future.value(false);
+                          //     }
+                          //     return Future.value(true);
+                          //   },
+                          //   background: Container(
+                          //     alignment: Alignment.centerLeft,
+                          //     padding: EdgeInsets.only(left: 15),
+                          //     color: Theme.of(context).colorScheme.error,
+                          //     child: Icon(
+                          //       Icons.delete,
+                          //       color:
+                          //           Theme.of(context).colorScheme.surfaceContainer,
+                          //     ),
+                          //   ),
+                          //   secondaryBackground: Container(
+                          //     alignment: Alignment.centerRight,
+                          //     padding: EdgeInsets.only(right: 15),
+                          //     color: Theme.of(context).primaryColor,
+                          //     child: Icon(
+                          //       Icons.copy,
+                          //       color:
+                          //           Theme.of(context).colorScheme.surfaceContainer,
+                          //     ),
+                          //   ),
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.only(bottom: 8),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Text(
+                          //           kanaBusms[index].input,
+                          //           style: TextStyle(
+                          //             color:
+                          //                 Theme.of(
+                          //                   context,
+                          //                 ).colorScheme.surfaceBright,
+                          //           ),
+                          //         ),
+                          //         // isLoading
+                          //         //     ? Padding(
+                          //         //       padding: const EdgeInsets.symmetric(
+                          //         //         vertical: 10,
+                          //         //       ),
+                          //         //       child: LinearProgressIndicator(),
+                          //         //     )
+                          //         //     : Text(
+                          //         //       kanaBusms[index].english,
+                          //         //       style: TextStyle(
+                          //         //         color:
+                          //         //             Theme.of(context).colorScheme.tertiary,
+                          //         //       ),
+                          //         //     ),
+                          //         Text(
+                          //           kanaBusms[index].english,
+                          //           style: TextStyle(
+                          //             color: Theme.of(context).colorScheme.tertiary,
+                          //           ),
+                          //         ),
+                          //         Text(
+                          //           kanaBusms[index].kana,
+                          //           style: TextStyle(
+                          //             color: Theme.of(context).colorScheme.primary,
+                          //           ),
+                          //         ),
+                          //         Text(
+                          //           kanaBusms[index].romaji,
+                          //           style: TextStyle(
+                          //             color:
+                          //                 Theme.of(context).colorScheme.secondary,
+                          //           ),
+                          //         ),
+                          //         index != kanaBusms.length - 1
+                          //             ? Divider(
+                          //               color:
+                          //                   Theme.of(context).colorScheme.surface,
+                          //             )
+                          //             : const SizedBox(),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // );
                         },
-                        confirmDismiss: (direction) async {
-                          if (direction == DismissDirection.endToStart) {
-                            return Future.value(false);
-                          }
-                          return Future.value(true);
-                        },
-                        background: Container(
-                          alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.only(left: 15),
-                          color: Theme.of(context).colorScheme.error,
-                          child: Icon(
-                            Icons.delete,
-                            color:
-                                Theme.of(context).colorScheme.surfaceContainer,
-                          ),
-                        ),
-                        secondaryBackground: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(right: 15),
-                          color: Theme.of(context).primaryColor,
-                          child: Icon(
-                            Icons.copy,
-                            color:
-                                Theme.of(context).colorScheme.surfaceContainer,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                kanaBusms[index].input,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceBright,
-                                ),
-                              ),
-                              // isLoading
-                              //     ? Padding(
-                              //       padding: const EdgeInsets.symmetric(
-                              //         vertical: 10,
-                              //       ),
-                              //       child: LinearProgressIndicator(),
-                              //     )
-                              //     : Text(
-                              //       kanaBusms[index].english,
-                              //       style: TextStyle(
-                              //         color:
-                              //             Theme.of(context).colorScheme.tertiary,
-                              //       ),
-                              //     ),
-                              Text(
-                                kanaBusms[index].english,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
-                              ),
-                              Text(
-                                kanaBusms[index].kana,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              Text(
-                                kanaBusms[index].romaji,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              index != kanaBusms.length - 1
-                                  ? Divider(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  )
-                                  : const SizedBox(),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -430,18 +380,19 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
 
   void _save() {
     if (inputCont.text.isNotEmpty) {
-      setState(() {
-        kanaBusms.add(
-          Busm(
-            createdAt: DateTime.now(),
-            english: englishCont.text,
-            input: inputCont.text,
-            kana: kanaCont.text,
-            romaji: romajiCont.text,
-          ),
-        );
-        kanaBusms.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-      });
+      Busm newBusm = Busm(
+        createdAt: DateTime.now(),
+        english: englishCont.text,
+        input: inputCont.text,
+        kana: kanaCont.text,
+        romaji: romajiCont.text,
+      );
+      // setState(() {
+      //   kanaBusms.add(newBusm);
+      //   kanaBusms.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+      // });
+
+      context.read<BusmCubit>().addBusm(newBusm);
     }
   }
 

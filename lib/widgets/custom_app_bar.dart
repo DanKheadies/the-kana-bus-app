@@ -8,7 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text('Kana Hero'),
+      title: Text('Kana Bus'),
       actions: [
         BlocBuilder<BusmCubit, BusmState>(
           builder: (context, state) {
@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 tooltip: 'Delete',
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  context.read<BusmCubit>().clear();
+                  context.read<BusmCubit>().removeBusms();
                 },
               );
             } else {

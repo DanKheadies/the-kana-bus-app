@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:kana_bus_app/barrel.dart';
 import 'package:kana_bus_app/firebase_options.dart';
-import 'package:logger/web.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
@@ -33,19 +33,47 @@ class KanaBus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(create: (context) => BrightnessCubit()),
-        BlocProvider(create: (context) => BusmCubit()),
+        RepositoryProvider(create: (context) => UserRepository()),
+        RepositoryProvider(create: (context) => StorageRepository()),
+        RepositoryProvider(create: (context) => AuthRepository()),
       ],
-      child: BlocBuilder<BrightnessCubit, Brightness>(
-        builder: (context, state) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: goRouter,
-            theme: state == Brightness.dark ? darkTheme() : lightTheme(),
-          );
-        },
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create:
+                (context) => AuthenticationCubit(
+                  authRepository: context.read<AuthRepository>(),
+                ),
+          ),
+          BlocProvider(create: (context) => BrightnessCubit()),
+          BlocProvider(create: (context) => BusmCubit()),
+          BlocProvider(
+            create:
+                (context) => UserBloc(
+                  storageRepository: context.read<StorageRepository>(),
+                  userRepository: context.read<UserRepository>(),
+                ),
+          ),
+          BlocProvider(
+            create:
+                (context) => AuthBloc(
+                  authCubit: context.read<AuthenticationCubit>(),
+                  authRepository: context.read<AuthRepository>(),
+                  userBloc: context.read<UserBloc>(),
+                ),
+          ),
+        ],
+        child: BlocBuilder<BrightnessCubit, Brightness>(
+          builder: (context, state) {
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routerConfig: goRouter,
+              theme: state == Brightness.dark ? darkTheme() : lightTheme(),
+            );
+          },
+        ),
       ),
     );
   }

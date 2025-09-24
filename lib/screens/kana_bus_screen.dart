@@ -36,6 +36,7 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: CustomBottomAppBar(),
+      endDrawer: CustomDrawer(),
       floatingActionButton: InputButton(onTap: () => focusInput.requestFocus()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       resizeToAvoidBottomInset: false,
@@ -138,6 +139,7 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
                                   label: 'Delete',
                                 ),
                                 SlidableAction(
+                                  // Note: should share all 4 inputs (w/ labels)
                                   onPressed: (context) => print('TODO: share'),
                                   backgroundColor: Color(0xFF21B7CA),
                                   foregroundColor: Colors.white,
@@ -146,8 +148,6 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
                                 ),
                               ],
                             ),
-
-                            // The end action pane is the one at the right or the bottom side.
                             endActionPane: ActionPane(
                               motion: ScrollMotion(),
                               children: [
@@ -175,13 +175,13 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
                                   icon: Icons.copy,
                                   label: 'Copy',
                                 ),
-                                SlidableAction(
-                                  onPressed: (context) => print('TODO: save'),
-                                  backgroundColor: Color(0xFF0392CF),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.save,
-                                  label: 'Save',
-                                ),
+                                // SlidableAction(
+                                //   onPressed: (context) => print('TODO: save'),
+                                //   backgroundColor: Color(0xFF0392CF),
+                                //   foregroundColor: Colors.white,
+                                //   icon: Icons.save,
+                                //   label: 'Save',
+                                // ),
                               ],
                             ),
                             child: SizedBox(
@@ -240,116 +240,6 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
                               ),
                             ),
                           );
-                          // return Dismissible(
-                          //   key: Key(kanaBusms[index].createdAt.toString()),
-                          //   onDismissed: (direction) {
-                          //     if (direction == DismissDirection.startToEnd) {
-                          //       String input = kanaBusms[index].input;
-                          //       setState(() {
-                          //         kanaBusms.removeAt(index);
-                          //       });
-                          //       ScaffoldMessenger.of(context)
-                          //         ..clearSnackBars()
-                          //         ..showSnackBar(
-                          //           SnackBar(
-                          //             content: Text('$input has been removed.'),
-                          //           ),
-                          //         );
-                          //     } else if (direction == DismissDirection.endToStart) {
-                          //       // TODO copy
-                          //       setState(() {
-                          //         inputCont.text = kanaBusms[index].input;
-                          //       });
-                          //       ScaffoldMessenger.of(context)
-                          //         ..clearSnackBars()
-                          //         ..showSnackBar(
-                          //           SnackBar(content: Text('Trying to copy..')),
-                          //         );
-                          //     }
-                          //   },
-                          //   confirmDismiss: (direction) async {
-                          //     if (direction == DismissDirection.endToStart) {
-                          //       return Future.value(false);
-                          //     }
-                          //     return Future.value(true);
-                          //   },
-                          //   background: Container(
-                          //     alignment: Alignment.centerLeft,
-                          //     padding: EdgeInsets.only(left: 15),
-                          //     color: Theme.of(context).colorScheme.error,
-                          //     child: Icon(
-                          //       Icons.delete,
-                          //       color:
-                          //           Theme.of(context).colorScheme.surfaceContainer,
-                          //     ),
-                          //   ),
-                          //   secondaryBackground: Container(
-                          //     alignment: Alignment.centerRight,
-                          //     padding: EdgeInsets.only(right: 15),
-                          //     color: Theme.of(context).primaryColor,
-                          //     child: Icon(
-                          //       Icons.copy,
-                          //       color:
-                          //           Theme.of(context).colorScheme.surfaceContainer,
-                          //     ),
-                          //   ),
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.only(bottom: 8),
-                          //     child: Column(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         Text(
-                          //           kanaBusms[index].input,
-                          //           style: TextStyle(
-                          //             color:
-                          //                 Theme.of(
-                          //                   context,
-                          //                 ).colorScheme.surfaceBright,
-                          //           ),
-                          //         ),
-                          //         // isLoading
-                          //         //     ? Padding(
-                          //         //       padding: const EdgeInsets.symmetric(
-                          //         //         vertical: 10,
-                          //         //       ),
-                          //         //       child: LinearProgressIndicator(),
-                          //         //     )
-                          //         //     : Text(
-                          //         //       kanaBusms[index].english,
-                          //         //       style: TextStyle(
-                          //         //         color:
-                          //         //             Theme.of(context).colorScheme.tertiary,
-                          //         //       ),
-                          //         //     ),
-                          //         Text(
-                          //           kanaBusms[index].english,
-                          //           style: TextStyle(
-                          //             color: Theme.of(context).colorScheme.tertiary,
-                          //           ),
-                          //         ),
-                          //         Text(
-                          //           kanaBusms[index].kana,
-                          //           style: TextStyle(
-                          //             color: Theme.of(context).colorScheme.primary,
-                          //           ),
-                          //         ),
-                          //         Text(
-                          //           kanaBusms[index].romaji,
-                          //           style: TextStyle(
-                          //             color:
-                          //                 Theme.of(context).colorScheme.secondary,
-                          //           ),
-                          //         ),
-                          //         index != kanaBusms.length - 1
-                          //             ? Divider(
-                          //               color:
-                          //                   Theme.of(context).colorScheme.surface,
-                          //             )
-                          //             : const SizedBox(),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // );
                         },
                       ),
                     );
@@ -387,10 +277,6 @@ class _KanaBusScreenState extends State<KanaBusScreen> {
         kana: kanaCont.text,
         romaji: romajiCont.text,
       );
-      // setState(() {
-      //   kanaBusms.add(newBusm);
-      //   kanaBusms.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-      // });
 
       context.read<BusmCubit>().addBusm(newBusm);
     }

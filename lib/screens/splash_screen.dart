@@ -21,17 +21,18 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     aniCont = AnimationController(
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
         vsync: this,
       )
-      ..forward().then((_) {
-        aniCont.reverse();
-      });
+      // ..forward().then((_) {
+      //   aniCont.reverse();
+      // });
+      ..forward();
 
-    animation = CurvedAnimation(parent: aniCont, curve: Curves.fastOutSlowIn);
+    animation = CurvedAnimation(parent: aniCont, curve: Curves.decelerate);
 
     navTimer = Timer(
-      const Duration(seconds: 4),
+      const Duration(seconds: 3),
       () => context.goNamed('kanaBus'),
     );
   }
@@ -62,6 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
                 padding: const EdgeInsets.all(8.0),
                 child: Image(
                   image: AssetImage('assets/images/splash/launch.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
